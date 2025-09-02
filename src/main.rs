@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use std::fs;
 
 fn day1() {
@@ -47,8 +48,18 @@ fn level_is_safe(level: &Vec<usize>) -> bool {
         && adjacent_out_of_range
 }
 
+fn level_is_sort_of_safe(level: &Vec<usize>) -> bool {
+    level
+        .iter()
+        .cloned()
+        .combinations(level.len() - 1)
+        .map(|x| x[0..x.len()].to_owned())
+        .map(|x| level_is_safe(&x))
+        .any(|x| x == true)
+}
+
 fn day2() {
-    // Part 1
+    // PART 1
     let contents =
         fs::read_to_string("inputs/2.txt").expect("Something went wrong reading the file");
 
@@ -67,6 +78,13 @@ fn day2() {
         .count();
 
     println!("{:?}", unsafe_levels);
+
+    // PART 2
+    let sort_of_unsafe_levels: usize = parsed_levels
+        .iter()
+        .filter(|level| level_is_safe(level) || level_is_sort_of_safe(level))
+        .count();
+    println!("{:?}", sort_of_unsafe_levels);
 }
 
 fn main() {
