@@ -4,7 +4,6 @@ fn day1() {
     let contents =
         fs::read_to_string("inputs/1.txt").expect("Something went wrong reading the file");
 
-    // PART 1
     let blah: Vec<(usize, usize)> = contents
         .lines()
         .map(|s| s.split_once("   ").expect("something bad happened"))
@@ -21,6 +20,8 @@ fn day1() {
 
     let mut right_vec: Vec<usize> = blah.iter().map(|t| t.1).collect();
     right_vec.sort();
+
+    // PART 1
     let result: usize = left_vec
         .iter()
         .zip(right_vec.iter())
@@ -29,7 +30,6 @@ fn day1() {
     println!("{result}");
 
     // PART 2
-
     let res: usize = left_vec
         .iter()
         .map(|x| right_vec.iter().filter(|&n| *n == *x).count() * x)
@@ -38,6 +38,41 @@ fn day1() {
     println!("{res}");
 }
 
+fn level_is_safe(level: &Vec<usize>) -> bool {
+    let adjacent_out_of_range = level
+        .windows(2)
+        .all(|w| (1..=3).contains(&w[0].abs_diff(w[1])));
+
+    (level.is_sorted_by(|a, b| a <= b) || level.is_sorted_by(|a, b| a >= b))
+        && adjacent_out_of_range
+}
+
+fn day2() {
+    // Part 1
+    let contents =
+        fs::read_to_string("inputs/2.txt").expect("Something went wrong reading the file");
+
+    let parsed_levels: Vec<Vec<usize>> = contents
+        .lines()
+        .map(|l| {
+            l.split(" ")
+                .map(|z| z.parse::<usize>().expect("help"))
+                .collect()
+        })
+        .collect();
+
+    let unsafe_levels: usize = parsed_levels
+        .iter()
+        .filter(|level| level_is_safe(level))
+        .count();
+
+    println!("{:?}", unsafe_levels);
+}
+
 fn main() {
+    println!("DAY 1");
     day1();
+
+    println!("DAY 2");
+    day2();
 }
