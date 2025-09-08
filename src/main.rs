@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use regex::Regex;
 use std::fs;
 
 fn day1() {
@@ -87,10 +88,31 @@ fn day2() {
     println!("{:?}", sort_of_unsafe_levels);
 }
 
+fn day3() {
+    // part 1
+    let contents =
+        fs::read_to_string("inputs/3.txt").expect("Something went wrong reading the file");
+
+    let re = Regex::new(r"mul\((\d{0,3}),(\d{0,3})\)").unwrap();
+
+    let mut results = vec![];
+
+    for (_, [firstnum, secondnum]) in re.captures_iter(&contents).map(|c| c.extract()) {
+        results.push(firstnum.parse::<usize>().unwrap() * secondnum.parse::<usize>().unwrap());
+    }
+
+    let total: usize = results.into_iter().sum();
+
+    println!("{total}");
+}
+
 fn main() {
     println!("DAY 1");
     day1();
 
     println!("DAY 2");
     day2();
+
+    println!("DAY 3");
+    day3();
 }
